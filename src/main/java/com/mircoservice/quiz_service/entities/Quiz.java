@@ -20,8 +20,7 @@ public class Quiz {
     private Integer id;
     private String title;
 
-    @ManyToMany
-    @OrderBy("id ASC")
-    List<Question> questionList;
+    @ElementCollection
+    List<Integer> questionList;
 
 }

@@ -1,14 +1,16 @@
 package com.mircoservice.quiz_service.service;
 
-import com.microservices.quiz_app.entities.Question;
-import com.microservices.quiz_app.entities.QuestionWrapper;
-import com.microservices.quiz_app.entities.Quiz;
-import com.microservices.quiz_app.entities.Response;
-import com.microservices.quiz_app.repository.QuestionsRepo;
-import com.microservices.quiz_app.repository.QuizRepo;
+
+import com.mircoservice.quiz_service.entities.QuestionWrapper;
+import com.mircoservice.quiz_service.entities.Quiz;
+import com.mircoservice.quiz_service.entities.Response;
+import com.mircoservice.quiz_service.feign.QuizInterface;
+import com.mircoservice.quiz_service.repository.QuizRepo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,10 +18,10 @@ import java.util.List;
 public class QuizService {
 
     private final QuizRepo quizRepo;
-    private final QuestionsRepo questionsRepo;
+    private final QuizInterface quizInterface;
 
     public void createQuiz(String category, int numQ, String title) {
-        List<Question> questions = questionsRepo.findRandomQuestionsByCategory(category, numQ);
+        List<Integer> questions = quizInterface.getQuestionForQuiz(category, numQ).getBody();
         Quiz quiz = new Quiz();
         quiz.setTitle(title);
         quiz.setQuestionList(questions);
@@ -27,20 +29,13 @@ public class QuizService {
     }
 
     public List<QuestionWrapper> getQuizQuestions(Integer id) {
-        return null;
+
+        Quiz quiz  = quizRepo.findById(id).get();
+        List<Integer> questionIds = quiz.getQuestionList();
+        return quizInterface.getQuestionFromId(questionIds).getBody();
     }
 
     public int calculateResult(Integer id, List<Response> responses) {
-        Quiz quiz = quizRepo.findById(id).get();
-        List<Question> questions = quiz.getQuestionList();
-        int result = 0;
-        int i = 0;
-        for(Response response : responses){
-            System.out.println(response.getResponse()+ "  --->>>> "+ questions.get(i).getRightAnswer());
-            if(response.getResponse().equals(questions.get(i).getRightAnswer()))
-                result++;
-            i++;
-        }
-        return result;
+        return quizInterface.getScore(responses).getBody();
     }
 }

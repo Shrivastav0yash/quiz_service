@@ -1,6 +1,6 @@
 spring:
   application:
-    name: Chapter-9-Mircoservices
+    name: Quiz-Service
 
   datasource:
     url: jdbc:mysql://localhost:3306/Microservice_quizdb
@@ -17,3 +17,6 @@ spring:
     init:
       mode: never
       data-locations: classpath:data.sql
+
+server:
+  port: 8090

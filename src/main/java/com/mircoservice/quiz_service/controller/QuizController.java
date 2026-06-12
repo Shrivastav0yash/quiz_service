@@ -1,8 +1,9 @@
 package com.mircoservice.quiz_service.controller;
 
-import com.microservices.quiz_app.entities.QuestionWrapper;
-import com.microservices.quiz_app.entities.Response;
-import com.microservices.quiz_app.service.QuizService;
+import com.mircoservice.quiz_service.entities.QuestionWrapper;
+import com.mircoservice.quiz_service.entities.QuizDto;
+import com.mircoservice.quiz_service.entities.Response;
+import com.mircoservice.quiz_service.service.QuizService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +19,8 @@ public class QuizController {
     private final QuizService quizService;
 
     @PostMapping("/create")
-    public ResponseEntity<String> createQuiz(@RequestParam String category, @RequestParam int numQ, @RequestParam String title){
-        quizService.createQuiz(category, numQ, title);
+    public ResponseEntity<String> createQuiz(@RequestBody QuizDto quizDto){
+        quizService.createQuiz(quizDto.getCategoryName(), quizDto.getNumQuestions(), quizDto.getTitle());
         return new ResponseEntity<>("Quiz Created",HttpStatus.OK);
     }
 
